@@ -1,6 +1,6 @@
 <template lang="pug">
-div.IndexPage
-  p IndexPage
+div.NewsContentPage
+  p .NewsContentPage
 </template>
 
 <script lang="ts">
@@ -10,6 +10,6 @@ export default defineComponent({})
 </script>
 
 <style lang="sass">
-.IndexPage
+.NewsContentPage
   background-color: #fff
 </style>

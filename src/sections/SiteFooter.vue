@@ -1,6 +1,6 @@
 <template lang="pug">
-div.IndexPage
-  p IndexPage
+footer.SiteFooter
+  p SiteFooter
 </template>
 
 <script lang="ts">
@@ -10,6 +10,6 @@ export default defineComponent({})
 </script>
 
 <style lang="sass">
-.IndexPage
+.SiteFooter
   background-color: #fff
 </style>
