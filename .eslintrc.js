@@ -12,6 +12,7 @@ module.exports = {
     "plugin:nuxt/recommended",
   ],
   plugins: ["prettier"],
+  ignorePatterns: ["src/external", "src/static"],
   // add your custom rules here
   rules: {},
 }

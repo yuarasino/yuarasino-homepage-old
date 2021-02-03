@@ -1,20 +1,20 @@
 <template lang="pug">
-div.IndexPage
-  IndexTop
+section#top.IndexTop
+  Live2dCanvas
 </template>
 
 <script lang="ts">
 import { defineComponent } from "@nuxtjs/composition-api"
-import IndexTop from "@/sections/index/IndexTop.vue"
+import Live2dCanvas from "@/components/Live2dCanvas.vue"
 
 export default defineComponent({
   components: {
-    IndexTop,
+    Live2dCanvas,
   },
 })
 </script>
 
 <style lang="sass">
-.IndexPage
+.IndexTop
   background-color: #fff
 </style>
