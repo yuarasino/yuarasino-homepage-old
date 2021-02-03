@@ -16,13 +16,17 @@ export default {
     link: [{ rel: "icon", type: "image/x-icon", href: "/favicon.ico" }],
   },
 
-  css: [],
+  css: ["@/assets/styles/global.sass"],
 
   plugins: [],
 
   components: true,
 
-  buildModules: ["@nuxt/typescript-build", "@nuxtjs/composition-api"],
+  buildModules: [
+    "@nuxt/typescript-build",
+    "@nuxtjs/composition-api",
+    "@nuxtjs/style-resources",
+  ],
 
   modules: [],
 
@@ -37,5 +41,9 @@ export default {
 
   generate: {
     interval: 1000,
+  },
+
+  styleResources: {
+    sass: ["@/assets/styles/import.sass"],
   },
 }
