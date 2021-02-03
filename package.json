@@ -14,7 +14,9 @@
   "dependencies": {
     "@nuxt/typescript-runtime": "^2.0.1",
     "core-js": "^3.8.3",
-    "nuxt": "^2.14.12"
+    "modern-css-reset": "^1.4.0",
+    "nuxt": "^2.14.12",
+    "yakuhanjp": "^3.3.1"
   },
   "devDependencies": {
     "@nuxt/types": "^2.14.12",

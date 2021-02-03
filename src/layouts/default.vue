@@ -16,7 +16,7 @@ export default defineComponent({
   components: {
     SiteHeader,
     SiteMain,
-    SiteFooter
+    SiteFooter,
   },
 })
 </script>

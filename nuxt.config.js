@@ -16,7 +16,11 @@ export default {
     link: [{ rel: "icon", type: "image/x-icon", href: "/favicon.ico" }],
   },
 
-  css: ["@/assets/styles/global.sass"],
+  css: [
+    "modern-css-reset/dist/reset.min.css",
+    "yakuhanjp/dist/css/yakuhanjp-noto.min.css",
+    "@/assets/styles/global.sass",
+  ],
 
   plugins: [],
 
