@@ -18,6 +18,8 @@ export default class Live2dManager {
     const model = new Live2dModel()
     await model.initializeAsync(modelName, this._webgl)
     this._model = model
+
+    this.changeExpression()
     this.resize()
   }
 
@@ -30,8 +32,17 @@ export default class Live2dManager {
       )
       this._model.loop(deltaSecond, this._canvas, this._buffer)
       lastTime = time
+      requestAnimationFrame(loop)
     }
     requestAnimationFrame(loop)
+  }
+
+  public getExpressionNames(): string[] {
+    return this._model.getExpressionNames()
+  }
+
+  public changeExpression(expressionName?: string) {
+    this._model.changeExpression(expressionName)
   }
 
   public resize() {

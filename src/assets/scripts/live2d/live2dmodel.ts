@@ -2,6 +2,8 @@ import {
   CubismModelSettingJson,
   CubismUserModel,
   CubismMatrix44,
+  CubismEyeBlink,
+  ACubismMotion,
 } from "./live2dimport"
 import ArchiveLoader from "./archiveloader"
 
@@ -11,6 +13,7 @@ const UsePremultiply = true
 export default class Live2dModel extends CubismUserModel {
   private _loader!: ArchiveLoader
   private _setting!: CubismModelSettingJson
+  private _expressions!: { [key: string]: ACubismMotion }
 
   public async initializeAsync(
     modelName: string,
@@ -23,7 +26,9 @@ export default class Live2dModel extends CubismUserModel {
     this._setSetting()
     this._setModel()
     await this._setTexturesAsync(webgl)
+    this._setExpressions()
     this._setPhysics()
+    this._setEyeBlink()
   }
 
   public loop(
@@ -37,10 +42,25 @@ export default class Live2dModel extends CubismUserModel {
     this._motionManager.updateMotion(this._model, deltaSecond)
     this._model.saveParameters()
 
+    this._eyeBlink.updateParameters(this._model, deltaSecond)
     this._physics.evaluate(this._model, deltaSecond)
+
+    this._model.update()
 
     renderer.setRenderState(buffer, [0, 0, canvas.width, canvas.height])
     renderer.drawModel()
+  }
+
+  public getExpressionNames(): string[] {
+    return Object.keys(this._expressions)
+  }
+
+  public changeExpression(expressionName?: string) {
+    if (!expressionName) {
+      expressionName = this.getExpressionNames()[0]
+    }
+    const expression = this._expressions[expressionName]
+    this._motionManager.startMotionPriority(expression, false, 0)
   }
 
   public resize(canvas: HTMLCanvasElement) {
@@ -63,21 +83,35 @@ export default class Live2dModel extends CubismUserModel {
     const searchName = ".model3.json"
     const buffer = this._loader.loadBuffer(searchName)
     this._setting = new CubismModelSettingJson(buffer, buffer.byteLength)
-    console.log("setting loaded...")
   }
 
   private _setModel() {
     const searchName = this._setting.getModelFileName()
     const buffer = this._loader.loadBuffer(searchName)
     this.loadModel(buffer)
-    console.log("model loaded...")
+  }
+
+  private _setExpressions() {
+    const expressions: { [key: string]: ACubismMotion } = {}
+    for (let i = 0; i < this._setting.getExpressionCount(); i++) {
+      const expressionName = this._setting.getExpressionName(i)
+      const searchName = this._setting.getExpressionFileName(i)
+      const buffer = this._loader.loadBuffer(searchName)
+      const expression = this.loadExpression(
+        buffer,
+        buffer.byteLength,
+        expressionName
+      )
+      expressions[expressionName] = expression
+    }
+    this._expressions = expressions
+    console.log(expressions)
   }
 
   private _setPhysics() {
     const searchName = this._setting.getPhysicsFileName()
     const buffer = this._loader.loadBuffer(searchName)
     this.loadPhysics(buffer, buffer.byteLength)
-    console.log("physics loaded...")
   }
 
   private async _setTexturesAsync(webgl: WebGLRenderingContext) {
@@ -93,7 +127,6 @@ export default class Live2dModel extends CubismUserModel {
     }
     renderer.setIsPremultipliedAlpha(UsePremultiply)
     renderer.startUp(webgl)
-    console.log("texture loaded...")
   }
 
   private _createTextureAsync(
@@ -131,5 +164,9 @@ export default class Live2dModel extends CubismUserModel {
       }
       image.src = src
     })
+  }
+
+  private _setEyeBlink() {
+    this._eyeBlink = new CubismEyeBlink(this._setting)
   }
 }
