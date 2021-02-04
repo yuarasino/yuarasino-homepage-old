@@ -2,7 +2,7 @@ import { Zlib } from "zlibjs/bin/unzip.min.js"
 import Unzip = Zlib.Unzip
 
 const ModelDir = "/live2d/models"
-const S = 1125
+const S = 101
 
 export default class ArchiveLoader {
   private _unzip!: Unzip

@@ -1,6 +1,11 @@
-import { CubismModelSettingJson, CubismUserModel } from "./live2dimport"
+import {
+  CubismModelSettingJson,
+  CubismUserModel,
+  CubismMatrix44,
+} from "./live2dimport"
 import ArchiveLoader from "./archiveloader"
 
+const ModelScale = 5.0
 const UsePremultiply = true
 
 export default class Live2dModel extends CubismUserModel {
@@ -23,8 +28,8 @@ export default class Live2dModel extends CubismUserModel {
 
   public loop(
     deltaSecond: number,
-    buffer: WebGLFramebuffer,
-    viewport: number[]
+    canvas: HTMLCanvasElement,
+    buffer: WebGLFramebuffer
   ) {
     const renderer = this.getRenderer()
 
@@ -34,8 +39,24 @@ export default class Live2dModel extends CubismUserModel {
 
     this._physics.evaluate(this._model, deltaSecond)
 
-    renderer.setRenderState(buffer, viewport)
+    renderer.setRenderState(buffer, [0, 0, canvas.width, canvas.height])
     renderer.drawModel()
+  }
+
+  public resize(canvas: HTMLCanvasElement) {
+    const renderer = this.getRenderer()
+
+    const projectionMatrix = new CubismMatrix44()
+    projectionMatrix.loadIdentity()
+    const raito = canvas.height / canvas.width
+    const xScale = raito < 1.0 ? raito : 1.0
+    const yScale = raito < 1.0 ? 1.0 : 1 / raito
+    projectionMatrix.scale(xScale, yScale)
+    projectionMatrix.scaleRelative(ModelScale, ModelScale)
+    const modelMatrix = this.getModelMatrix()
+    projectionMatrix.multiplyByMatrix(modelMatrix)
+
+    renderer.setMvpMatrix(projectionMatrix)
   }
 
   private _setSetting() {

@@ -17,7 +17,7 @@ export default defineComponent({
     onMounted(async () => {
       const canvas = canvasRef.value!
       const manager = new Live2dManager(canvas)
-      await manager.initializeAsync("yuarasino.1024")
+      await manager.initializeAsync("yuarasino.2048")
       manager.main()
     })
 
