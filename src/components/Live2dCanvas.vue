@@ -8,15 +8,17 @@ canvas.Live2dCanvas(
 
 <script lang="ts">
 import { defineComponent, ref, onMounted } from "@nuxtjs/composition-api"
-import Live2dManager from "@/assets/scripts/live2d/Live2dManager"
+import Live2dManager from "@/assets/scripts/live2d/live2dmanager"
 
 export default defineComponent({
   setup() {
     const canvasRef = ref<HTMLCanvasElement>()
 
     onMounted(async () => {
-      const manager = new Live2dManager()
+      const canvas = canvasRef.value!
+      const manager = new Live2dManager(canvas)
       await manager.initializeAsync("yuarasino.1024")
+      manager.main()
     })
 
     return {

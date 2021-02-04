@@ -11,6 +11,11 @@ export default defineComponent({
   components: {
     IndexTop,
   },
+  head() {
+    return {
+      script: [{ src: "/live2d/scripts/live2dcubismcore.min.js", body: true }],
+    }
+  },
 })
 </script>
 

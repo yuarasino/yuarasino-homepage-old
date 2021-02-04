@@ -1,8 +1,53 @@
-import ArchiveLoader from "./ArchiveLoader"
+import { CubismFramework } from "./live2dimport"
+import Live2dModel from "./live2dmodel"
 
 export default class Live2dManager {
+  private _canvas: HTMLCanvasElement
+  private _webgl!: WebGLRenderingContext
+  private _buffer!: WebGLFramebuffer
+  private _model!: Live2dModel
+
+  constructor(canvas: HTMLCanvasElement) {
+    this._canvas = canvas
+  }
+
   public async initializeAsync(modelName: string) {
-    const loader = new ArchiveLoader()
-    await loader.loadArchiveAsync(modelName)
+    this._initializeWebGL()
+    this._initializeFramework()
+
+    const model = new Live2dModel()
+    await model.initializeAsync(modelName, this._webgl)
+    this._model = model
+  }
+
+  public main() {
+    let lastTime = 0
+    const loop = (time: number) => {
+      const deltaSecond = (time - lastTime) / 1000
+      const viewport = [0, 0, this._canvas.width, this._canvas.height]
+      this._webgl.clear(
+        this._webgl.COLOR_BUFFER_BIT | this._webgl.DEPTH_BUFFER_BIT
+      )
+      this._model.loop(deltaSecond, this._buffer, viewport)
+      lastTime = time
+    }
+    requestAnimationFrame(loop)
+  }
+
+  private _initializeWebGL() {
+    const webgl = this._canvas.getContext("webgl")!
+    webgl.enable(webgl.BLEND)
+    webgl.enable(webgl.DEPTH_TEST)
+    webgl.blendFunc(webgl.SRC_ALPHA, webgl.ONE_MINUS_SRC_ALPHA)
+    webgl.depthFunc(webgl.LEQUAL)
+    webgl.clearColor(0.0, 0.0, 0.0, 0.0)
+    webgl.clearDepth(1.0)
+    this._webgl = webgl
+    this._buffer = webgl.getParameter(webgl.FRAMEBUFFER_BINDING)
+  }
+
+  private _initializeFramework() {
+    CubismFramework.startUp()
+    CubismFramework.initialize()
   }
 }
