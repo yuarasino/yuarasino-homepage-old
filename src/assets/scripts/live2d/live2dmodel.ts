@@ -1,9 +1,14 @@
 import {
+  CubismFramework,
+  CubismDefaultParameterId,
   CubismModelSettingJson,
   CubismUserModel,
   CubismMatrix44,
   CubismEyeBlink,
   ACubismMotion,
+  CubismBreath,
+  BreathParameterData,
+  csmVector,
 } from "./live2dimport"
 import ArchiveLoader from "./archiveloader"
 
@@ -29,6 +34,7 @@ export default class Live2dModel extends CubismUserModel {
     this._setExpressions()
     this._setPhysics()
     this._setEyeBlink()
+    this._setBreath()
   }
 
   public loop(
@@ -43,6 +49,7 @@ export default class Live2dModel extends CubismUserModel {
     this._model.saveParameters()
 
     this._eyeBlink.updateParameters(this._model, deltaSecond)
+    this._breath.updateParameters(this._model, deltaSecond)
     this._physics.evaluate(this._model, deltaSecond)
 
     this._model.update()
@@ -63,7 +70,7 @@ export default class Live2dModel extends CubismUserModel {
     this._motionManager.startMotionPriority(expression, false, 0)
   }
 
-  public resize(canvas: HTMLCanvasElement) {
+  public resizeModel(canvas: HTMLCanvasElement) {
     const renderer = this.getRenderer()
 
     const projectionMatrix = new CubismMatrix44()
@@ -105,7 +112,6 @@ export default class Live2dModel extends CubismUserModel {
       expressions[expressionName] = expression
     }
     this._expressions = expressions
-    console.log(expressions)
   }
 
   private _setPhysics() {
@@ -168,5 +174,18 @@ export default class Live2dModel extends CubismUserModel {
 
   private _setEyeBlink() {
     this._eyeBlink = new CubismEyeBlink(this._setting)
+  }
+
+  private _setBreath() {
+    this._breath = new CubismBreath()
+    const paramBreath = CubismFramework.getIdManager().getId(
+      CubismDefaultParameterId.ParamBreath
+    )
+    // eslint-disable-next-line new-cap
+    const breathParams = new csmVector<BreathParameterData>()
+    breathParams.pushBack(
+      new BreathParameterData(paramBreath, 0.0, 0.2, 5, 0.5)
+    )
+    this._breath.setParameters(breathParams)
   }
 }

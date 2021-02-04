@@ -15,12 +15,11 @@ export default class Live2dManager {
     this._initializeWebGL()
     this._initializeFramework()
 
-    const model = new Live2dModel()
-    await model.initializeAsync(modelName, this._webgl)
-    this._model = model
+    this._model = new Live2dModel()
+    await this._model.initializeAsync(modelName, this._webgl)
 
     this.changeExpression()
-    this.resize()
+    this.resizeCanvas()
   }
 
   public main() {
@@ -45,10 +44,10 @@ export default class Live2dManager {
     this._model.changeExpression(expressionName)
   }
 
-  public resize() {
+  public resizeCanvas() {
     this._canvas.width = this._canvas.clientWidth * devicePixelRatio
     this._canvas.height = this._canvas.clientHeight * devicePixelRatio
-    this._model.resize(this._canvas)
+    this._model.resizeModel(this._canvas)
   }
 
   private _initializeWebGL() {
